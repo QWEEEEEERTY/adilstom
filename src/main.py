@@ -15,7 +15,6 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    openapi_url="/openapi",
     lifespan=lifespan,
     root_path="/schedule/"
 )
