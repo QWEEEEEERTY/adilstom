@@ -20,4 +20,4 @@ EXPOSE 8000
 
 
 RUN chmod +x /app/run.sh
-CMD ["source", "/app/run.sh"]
+CMD ["bash", "/app/run.sh"]
