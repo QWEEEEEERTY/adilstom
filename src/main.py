@@ -16,7 +16,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     openapi_url="/openapi",
-    lifespan=lifespan
+    lifespan=lifespan,
+    root_path="schedule"
 )
 app.include_router(router)
 
