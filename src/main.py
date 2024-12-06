@@ -16,7 +16,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     lifespan=lifespan,
-    root_path="/schedule/"
+    root_path="/zapis"
 )
 app.include_router(router)
 
