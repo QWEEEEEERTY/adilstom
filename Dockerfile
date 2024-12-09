@@ -19,5 +19,5 @@ COPY run.sh /app
 EXPOSE 8000
 
 
-RUN chmod +x /app/run.sh
+RUN chmod +x /app/run-dev.sh
 CMD ["bash", "/app/run-dev.sh"]
