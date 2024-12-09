@@ -13,7 +13,7 @@ COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src /app/src
-COPY run.sh /app
+COPY run-dev.sh /app
 
 
 EXPOSE 8000
