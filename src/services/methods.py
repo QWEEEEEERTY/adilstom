@@ -1,10 +1,9 @@
 import aiohttp
-import asyncio
 import json
+
 from .constants import BASE_URL, headers
 from .defaults import get_schedule_params, create_zapis_payload, delete_payload
 from .utils import parse_schedule, merge_dicts
-from fastapi import HTTPException
 
 
 async def get_schedule(params: dict) -> dict:
@@ -32,13 +31,3 @@ async def delete_zapis(zapis_id: int):
         async with session.post(url=BASE_URL, headers=headers, data=payload) as response:
             content = await response.read()
             return json.loads(content.decode("utf-8"))
-
-
-async def main():
-    data = await create_zapis(payload=create_zapis_payload.copy())
-    print(data.get("status"))
-    print(data.get("content"))
-
-
-if __name__ == "__main__":
-    asyncio.run(main())

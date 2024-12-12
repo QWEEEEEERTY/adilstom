@@ -1,7 +1,8 @@
 from pydantic import BaseModel, Field, model_validator, ConfigDict, field_validator
 import datetime
-from .validators import validate_date, validate_phone
 from typing import Optional
+
+from .validators import validate_date, validate_phone
 
 
 class GetScheduleForm(BaseModel):
