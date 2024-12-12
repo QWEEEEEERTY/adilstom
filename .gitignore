@@ -1,0 +1,7 @@
+zapis.db
+.idea/
+.venv/
+venv/
+.env
+*.pyc
+*.pyo

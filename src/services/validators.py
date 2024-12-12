@@ -14,9 +14,10 @@ def validate_date(value: str):
     return value
 
 
-def validate_phone(value):
-    pattern = r"^\+7\(\d{3}\)\d{3}-\d{2}-\d{2}$"
-    if not re.match(pattern, value):
-        raise ValueError("Номер должен быть в формате +7(777)777-77-77")
-    value = f"{value[:2]} {value[2:7]} {value[7:]}"
-    return value
+def validate_phone(phone):
+    phone = re.sub(r"\D", "", phone)
+    if phone[0] in (7, 8):
+        phone[0] = 7
+
+    phone = f"+{phone[:-10]} ({phone[-10:-7]}) {phone[-7:-4]}-{phone[-4:-2]}-{phone[-2:]}"
+    return phone
