@@ -3,6 +3,7 @@ from src.services import create_zapis, get_schedule, delete_zapis
 from src.services import CreateZapisForm, GetScheduleForm, DeleteZapisForm
 from src.db import insert_zapis, get_zapis
 
+
 router = APIRouter(tags=["Schedule"])
 
 
@@ -33,6 +34,7 @@ async def create_entry(form_data: CreateZapisForm):
         await insert_zapis(phone=form_dict["phone"], date=form_dict["day"], zapis_id=zapis_id)
         return {"message": f"Запись успешно создана. ID записи: {zapis_id}"}
     except ValueError as e:
+
         raise HTTPException(status_code=400, detail=str(e))
 
 

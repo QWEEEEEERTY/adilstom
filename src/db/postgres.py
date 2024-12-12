@@ -1,26 +1,6 @@
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from sqlalchemy.orm import declarative_base, sessionmaker
-from sqlalchemy import Column, Integer, Text, TIMESTAMP
-from sqlalchemy_utils import database_exists, create_database
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker
 from src.config import POSTGRES_URL
-
-
-engine = create_async_engine(POSTGRES_URL, echo=True)
-
-async_session = async_sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
-
-
-Base = declarative_base()
-
-
-class Log(Base):
-    __tablename__ = "logs"
-
-    id = Column(Integer, primary_key=True, index=True)
-    time = Column(TIMESTAMP, default="now()")
-    request_body = Column(Text, nullable=False)
-    response_body = Column(Text, nullable=True)
-    response_status = Column(Integer, nullable=False)
 
 
 class SessionManager:
@@ -37,7 +17,7 @@ class SessionManager:
 
     def refresh(self) -> None:
         self.engine = create_async_engine(
-            POSTGRES_URL, echo=True, future=True
+            POSTGRES_URL, echo=False, future=True
         )
 
 
