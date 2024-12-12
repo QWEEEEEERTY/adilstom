@@ -16,8 +16,8 @@ def validate_date(value: str):
 
 def validate_phone(phone):
     phone = re.sub(r"\D", "", phone)
-    if phone[0] in (7, 8):
-        phone[0] = 7
+    if phone[0] in "78":
+        phone = f"7{phone[1:]}"
 
     phone = f"+{phone[:-10]} ({phone[-10:-7]}) {phone[-7:-4]}-{phone[-4:-2]}-{phone[-2:]}"
     return phone
