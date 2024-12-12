@@ -1,7 +1,7 @@
-zapis.db
+*.db
+*.sqlite3
+.env
 .idea/
 .venv/
 venv/
-.env
-*.pyc
-*.pyo
+__pycache__/
