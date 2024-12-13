@@ -23,11 +23,11 @@ class LogUnsuccessfulResponsesMiddleware(BaseHTTPMiddleware):
 
             if response.status_code >= 400:
                 log_entry = Log(
-                    request_url=str(request.url),
-                    request_method=request.method,
+                    url=str(request.url),
+                    method=request.method,
                     request_body=body.decode("utf-8") if body else None,
                     response_body=response_body,
-                    response_status=response.status_code
+                    status_code=response.status_code
                 )
 
                 async for session in get_session():

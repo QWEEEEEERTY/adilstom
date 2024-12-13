@@ -3,14 +3,12 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 
-from src.db import init_db
 from src.api.endpoints import router
 from src.api.middlewares import LogUnsuccessfulResponsesMiddleware
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await init_db()
     yield
     pass
 

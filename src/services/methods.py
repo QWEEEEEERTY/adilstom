@@ -1,5 +1,6 @@
 import aiohttp
 import json
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from .constants import BASE_URL, headers
 from .defaults import get_schedule_params, create_zapis_payload, delete_payload
@@ -29,5 +30,10 @@ async def delete_zapis(zapis_id: int):
     payload["id"] = zapis_id
     async with aiohttp.ClientSession() as session:
         async with session.post(url=BASE_URL, headers=headers, data=payload) as response:
-            content = await response.read()
-            return json.loads(content.decode("utf-8"))
+            if response.status >= 400:
+                return "Не удалось удалить запись!"
+            return "Успешно удалено!"
+
+
+def set_auth_token(session: AsyncSession, stomatology: str):
+    pass

@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Text, Integer, String
 from sqlalchemy.orm import declarative_base, Mapped, mapped_column
-
+from sqlalchemy.dialects.postgresql import VARCHAR
 
 Base = declarative_base()
 
@@ -10,15 +10,25 @@ class Zapis(Base):
 
     phone: Mapped[str] = mapped_column(String, primary_key=True)
     date: Mapped[str] = mapped_column(String, primary_key=True)
+    stomatology: Mapped[str] = mapped_column(String, default="adilstom")
     zapis_id: Mapped[int] = mapped_column(Integer)
+    is_active: Mapped[bool] = mapped_column(default=True)
 
 
 class Log(Base):
     __tablename__ = "logs"
 
-    id = Column(Integer, primary_key=True, index=True)
-    request_url = Column(Text, nullable=False)
-    request_method = Column(Text, nullable=False)
-    request_body = Column(Text, nullable=False)
-    response_body = Column(Text, nullable=True)
-    response_status = Column(Integer, nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
+    stomatology: Mapped[str] = mapped_column(VARCHAR(30), index=True, default="adilstom")
+    url: Mapped[str] = mapped_column(VARCHAR(40))
+    method: Mapped[str] = mapped_column(VARCHAR(6))
+    request_body: Mapped[str] = mapped_column(Text)
+    response_body: Mapped[str] = mapped_column(Text)
+    status_code: Mapped[int] = mapped_column(Integer)
+
+
+class Stomatology(Base):
+    __tablename__ = "stomatology"
+
+    name = Column(Text, primary_key=True)
+    token = Column(Text, nullable=False)
