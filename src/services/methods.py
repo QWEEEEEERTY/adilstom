@@ -30,8 +30,9 @@ async def delete_zapis(zapis_id: int):
     payload["id"] = zapis_id
     async with aiohttp.ClientSession() as session:
         async with session.post(url=BASE_URL, headers=headers, data=payload) as response:
-            content = await response.read()
-            return json.loads(content.decode("utf-8"))
+            if response.status >= 400:
+                return "Не удалось удалить запись!"
+            return "Успешно удалено!"
 
 
 async def main():
