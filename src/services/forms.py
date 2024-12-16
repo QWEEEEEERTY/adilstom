@@ -1,6 +1,8 @@
+from typing_extensions import Self
+
 from pydantic import BaseModel, Field, model_validator, ConfigDict, field_validator
 import datetime
-from typing import Optional
+from typing import Optional, Any
 
 from .validators import validate_date, validate_phone
 
@@ -19,6 +21,20 @@ class GetScheduleForm(BaseModel):
         else:
             self.end = validate_date(self.end)
         return self
+
+
+class TransferZapisForm(BaseModel):
+    day: str = "30.11.2024"
+    startHour: int = Field(ge=10, le=18)
+    startMinute: int = Field(ge=0, lt=60)
+    doctor: int = Field(ge=10_000, lt=100_000)
+
+    model_config = ConfigDict(extra="forbid")
+
+    @field_validator('day')
+    def validate(cls, day: str):
+        day = validate_date(day)
+        return day
 
 
 class CreateZapisForm(BaseModel):
@@ -61,3 +77,8 @@ class DeleteZapisForm(BaseModel):
         self.date = validate_date(self.date)
         self.phone = validate_phone(self.phone)
         return self
+
+
+
+form = TransferZapisForm(day="30.11.24", startHour="12", startMinute="00", doctor="12345")
+print(form)

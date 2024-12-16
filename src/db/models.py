@@ -20,9 +20,9 @@ class Log(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
     stomatology: Mapped[str] = mapped_column(VARCHAR(30), index=True, default="adilstom")
-    url: Mapped[str] = mapped_column(VARCHAR(40))
+    url: Mapped[str] = mapped_column(VARCHAR(100))
     method: Mapped[str] = mapped_column(VARCHAR(6))
-    request_body: Mapped[str] = mapped_column(Text)
+    request_body: Mapped[str] = mapped_column(Text, nullable=True)
     response_body: Mapped[str] = mapped_column(Text)
     status_code: Mapped[int] = mapped_column(Integer)
 
@@ -30,5 +30,5 @@ class Log(Base):
 class Stomatology(Base):
     __tablename__ = "stomatology"
 
-    name = Column(Text, primary_key=True)
-    token = Column(Text, nullable=False)
+    name: Mapped[str] = mapped_column(Text, primary_key=True)
+    token: Mapped[str] = mapped_column(Text, nullable=False)
