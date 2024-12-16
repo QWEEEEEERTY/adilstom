@@ -1,18 +1,17 @@
 import aiohttp
 import json
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from .constants import BASE_URL, headers, cookies
-from .defaults import get_schedule_params, create_zapis_payload, delete_payload
-from .utils import parse_schedule, merge_dicts
+from .constants import BASE_URL, base_headers
+from .defaults import base_get_params, base_create_payload, base_delete_payload
+from .utils import merge_dicts, build_cookies
+from .parsers import parse_schedule
 
 
 async def get_schedule(token: str, params: dict) -> dict:
-    params = merge_dicts(get_schedule_params, params)
-    temp_cookies = cookies.copy()
-    temp_cookies["user_token"] = token
+    cookies = build_cookies(token)
+    params = merge_dicts(base=base_get_params, extra=params)
     async with aiohttp.ClientSession() as session:
-        async with session.get(url=BASE_URL, params=params, headers=headers, cookies=temp_cookies) as response:
+        async with session.get(url=BASE_URL, headers=base_headers, cookies=cookies, params=params) as response:
             content = await response.read()
             content = json.loads(content.decode("utf-8"))
             schedule = parse_schedule(content, date=params.get("start"))
@@ -20,18 +19,22 @@ async def get_schedule(token: str, params: dict) -> dict:
 
 
 async def create_zapis(token: str, payload: dict) -> dict:
-    payload = merge_dicts(create_zapis_payload, payload)
+    cookies = build_cookies(token=token)
+    payload = merge_dicts(base=base_create_payload, extra=payload)
     async with aiohttp.ClientSession() as session:
-        async with session.post(url=BASE_URL, headers=headers, data=payload, cookies=cookies) as response:
+        async with session.post(url=BASE_URL, headers=base_headers, cookies=cookies, data=payload) as response:
             content = await response.read()
-            return json.loads(content.decode("utf-8"))
+            response = json.loads(content.decode("utf-8"))
+            if error := response.get("error"):
+                raise ValueError(error)
+            return response["status"]
 
 
 async def delete_zapis(token: str, zapis_id: int):
-    payload = delete_payload.copy()
-    payload["id"] = zapis_id
+    cookies = build_cookies(token)
+    payload = merge_dicts(base=base_delete_payload, extra={"id": zapis_id})
     async with aiohttp.ClientSession() as session:
-        async with session.post(url=BASE_URL, headers=headers, data=payload, cookies=cookies) as response:
+        async with session.post(url=BASE_URL, headers=base_headers, data=payload, cookies=cookies) as response:
             if response.status >= 400:
                 return "Не удалось удалить запись!"
             return "Успешно удалено!"

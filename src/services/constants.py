@@ -1,6 +1,6 @@
 BASE_URL = "https://macdent.kz/app/ajax"
 
-cookies = {
+base_cookies = {
     "_fbp": "fb.1.1732861716270.430987663529040988",
     "_ym_d": "1732861716",
     "_ym_uid": "1732861716389217373",
@@ -8,7 +8,7 @@ cookies = {
     "user_token": "znfiH6syUTZp8BrFq0U3GAXPibIINb4LlV2ZPYyg33LzUZ1FpqR2isB7NVOTQK6Yh1ztrjci1LtyAQN4ZWWpHDJy2raePL4IjU3L0LCXApH3QgoXv0aAuart",
 }
 
-headers = {
+base_headers = {
     "Host": "macdent.kz",
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:131.0) Gecko/20100101 Firefox/131.0",
     "Accept": "*/*",
