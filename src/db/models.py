@@ -12,9 +12,10 @@ class Zapis(Base):
     stomatology: Mapped[str] = mapped_column(String, index=True, default="adilstom")
     zapis_id: Mapped[int] = mapped_column(INTEGER, primary_key=True)
     is_active: Mapped[bool] = mapped_column(Boolean(create_constraint=True), default=True)
-    created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP, default=func.now())
 
     phone: Mapped[str] = mapped_column(VARCHAR(19), index=True)
+    iin: Mapped[str] = mapped_column(VARCHAR(12), nullable=False)
     date: Mapped[date] = mapped_column(DATE)
     time: Mapped[time] = mapped_column(TIME)
     doctor_id: Mapped[int] = mapped_column(INTEGER)
@@ -28,11 +29,12 @@ class Log(Base):
 
     id: Mapped[int] = mapped_column(INTEGER, primary_key=True, index=True, autoincrement=True)
     stomatology: Mapped[str] = mapped_column(VARCHAR(30), index=True, default="adilstom")
+    time: Mapped[datetime] = mapped_column(TIMESTAMP, default=func.now())
     url: Mapped[str] = mapped_column(VARCHAR(100))
     method: Mapped[str] = mapped_column(VARCHAR(6))
+    status_code: Mapped[int] = mapped_column(INTEGER)
     request_body: Mapped[str] = mapped_column(Text, nullable=True)
     response_body: Mapped[str] = mapped_column(Text)
-    status_code: Mapped[int] = mapped_column(INTEGER)
 
 
 class Stomatology(Base):

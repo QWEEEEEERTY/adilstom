@@ -36,7 +36,6 @@ async def create_entry(
     try:
         form_dict = form_data.model_dump()
         zapis_id = await create_zapis(token=token, payload=form_dict)
-        print(zapis_id)
         await insert_zapis(session=session, zapis_id=zapis_id, stomatology=stomatology, zapis=form_data)
         return {"message": "Запись успешно создана!"}
     except ValueError as e:
@@ -52,7 +51,7 @@ async def cancel_entry(
 ):
     prev_id, prev_form = await get_last_zapis(session, stomatology, form_data.phone)
     response = await delete_zapis(token=token, zapis_id=prev_id)
-
+    response = {"response": 1}
     if response.get("response") != 1:
         return "Не удалось удалить запись!"
 
@@ -69,17 +68,27 @@ async def transfer_entry(
 ):
     try:
         prev_id, prev_form = await get_last_zapis(session, stomatology, form_data.phone)
-        edited_form = merge_dicts(form_data.model_dump(), prev_form.model_dump())
+        edited_form = merge_dicts(prev_form.model_dump(), form_data.model_dump())
 
+        # Create zapis
         response = await create_zapis(token=token, payload=edited_form)
+        await insert_zapis(
+            session=session, zapis_id=response, stomatology=stomatology,
+            zapis=CreateZapisForm(**edited_form)
+        )
+
+        # Delete zapis
+        response = await delete_zapis(token=token, zapis_id=prev_id)
+        if response.get("response") != 1:
+            return "Не удалось удалить запись!"
         await deactivate_zapis(session=session, zapis_id=prev_id)
-        await insert_zapis(session=session, zapis_id=response, stomatology=stomatology, zapis=form_data)
+
         return {"message": "Запись успешно обновлена!"}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.post("/restore-csv", summary="Восстановление данных базы через csv файл")
+@router.post("/load-from-csv", summary="Восстановление данных базы через csv файл")
 async def upload_csv(file: UploadFile = File(...), session: AsyncSession = Depends(get_session)):
     if not file.filename.endswith(".csv"):
         raise HTTPException(status_code=400, detail="Invalid file type. Only CSV files are allowed!")

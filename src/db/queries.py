@@ -5,7 +5,7 @@ from fastapi import HTTPException
 import datetime
 
 from .models import Stomatology, Zapis
-from src.services.forms import CreateZapisForm, TransferZapisForm
+from src.services.forms import CreateZapisForm
 
 
 async def get_auth_token(stomatology: str, session: AsyncSession) -> str:
@@ -30,7 +30,8 @@ async def insert_zapis(session: AsyncSession, stomatology: str, zapis_id: int, z
         doctor_id=zapis.doctor,
         patient_name=zapis.patientName,
         comment=zapis.comment,
-        zhaloba=zapis.zhaloba
+        zhaloba=zapis.zhaloba,
+        iin=zapis.iin
     )
     session.add(model)
     await session.commit()
@@ -53,7 +54,8 @@ async def get_last_zapis(session: AsyncSession, stomatology: str, phone: str) ->
             doctor=zapis.doctor_id,
             patientName=zapis.patient_name,
             comment=zapis.comment,
-            zhaloba=zapis.zhaloba
+            zhaloba=zapis.zhaloba if zapis.zhaloba else "",
+            iin=zapis.iin if zapis.iin else ""
         )
     raise HTTPException(status_code=400, detail="Не удалось найти запись с данным номером")
 
