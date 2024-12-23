@@ -1,0 +1,30 @@
+services:
+  psql:
+    image: postgres
+    hostname: "macdent-db"
+    restart: always
+    environment:
+      POSTGRES_DB: logs
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: very_strong_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - macdent-network
+  app:
+    build: .
+    command: make run
+    ports:
+      - "8000:8000"
+    networks:
+      - macdent-network
+    depends_on:
+      - psql
+
+volumes:
+  postgres_data:
+
+networks:
+  macdent-network:

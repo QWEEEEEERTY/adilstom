@@ -25,3 +25,7 @@ async def get_session() -> AsyncSession:
     session_maker = SessionManager().get_session_maker()
     async with session_maker() as session:
         yield session
+
+
+def get_engine():
+    return SessionManager().engine

@@ -1,39 +1,39 @@
 from starlette.requests import Request
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.concurrency import iterate_in_threadpool
+from starlette.responses import Response
 
 from src.db.models import Log
 from src.db.postgres import get_session
 
 
-class LogUnsuccessfulResponsesMiddleware(BaseHTTPMiddleware):
+class LoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         body = await request.body()
+        log_dict = {"url": str(request.url),
+                    "method": request.method,
+                    "request_body": body.decode('utf-8') if body else "No body"}
 
-        async def receive():
-            return {"type": "http.request", "body": body, "more_body": False}
+        response = await call_next(request)
 
-        request._receive = receive
+        response_body = b""
+        async for chunk in response.body_iterator:
+            response_body += chunk
+        response_body_str = response_body.decode('utf-8')
 
-        try:
-            response = await call_next(request)
-            response_body = [chunk async for chunk in response.body_iterator]
-            response.body_iterator = iterate_in_threadpool(iter(response_body))
-            response_body = response_body[0].decode()
+        rebuilt_response = Response(
+            content=response_body,
+            status_code=response.status_code,
+            headers=dict(response.headers)
+        )
 
-            if response.status_code >= 400:
-                log_entry = Log(
-                    url=str(request.url),
-                    method=request.method,
-                    request_body=body.decode("utf-8") if body else None,
-                    response_body=response_body,
-                    status_code=response.status_code
-                )
+        log_dict["status_code"] = response.status_code
+        log_dict["response_body"] = response_body_str
 
-                async for session in get_session():
-                    session.add(log_entry)
-                    await session.commit()
+        if response.status_code >= 400:
+            log = Log(**log_dict)
 
-            return response
-        except Exception as e:
-            raise e
+            async for session in get_session():
+                session.add(log)
+                await session.commit()
+
+        return rebuilt_response

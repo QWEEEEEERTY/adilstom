@@ -4,20 +4,19 @@ from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 
 from src.api.endpoints import router
-from src.api.middlewares import LogUnsuccessfulResponsesMiddleware
+from src.admin import create_admin
+from src.api.middlewares import LoggingMiddleware
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     yield
-    pass
 
-app = FastAPI(
-    lifespan=lifespan,
-    root_path="/zapis"
-)
-app.add_middleware(LogUnsuccessfulResponsesMiddleware)
+
+app = FastAPI(lifespan=lifespan,)
+app.add_middleware(LoggingMiddleware)
 app.include_router(router)
+create_admin(app)
 
 
 @app.exception_handler(RequestValidationError)

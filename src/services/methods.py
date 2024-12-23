@@ -18,13 +18,13 @@ async def get_schedule(token: str, params: dict) -> dict:
             return schedule if schedule else "Расписание на этот день еще не создано!"
 
 
-async def create_zapis(token: str, payload: dict) -> dict:
+async def create_zapis(token: str, payload: dict) -> int:
     cookies = build_cookies(token=token)
     payload = merge_dicts(base=base_create_payload, extra=payload)
     async with aiohttp.ClientSession() as session:
         async with session.post(url=BASE_URL, headers=base_headers, cookies=cookies, data=payload) as response:
             content = await response.read()
-            response = json.loads(content.decode("utf-8"))
+            response = json.loads(content)
             if error := response.get("error"):
                 raise ValueError(error)
             return response["status"]
@@ -35,9 +35,5 @@ async def delete_zapis(token: str, zapis_id: int):
     payload = merge_dicts(base=base_delete_payload, extra={"id": zapis_id})
     async with aiohttp.ClientSession() as session:
         async with session.post(url=BASE_URL, headers=base_headers, data=payload, cookies=cookies) as response:
-            if response.status >= 400:
-                return "Не удалось удалить запись!"
-            return "Успешно удалено!"
-
-
+            return json.loads(await response.read())
 

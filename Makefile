@@ -1,8 +1,14 @@
-alembic init -t async migrations
+init_db:
+	alembic init -t async migrations
 
+revision:
+	alembic revision --autogenerate -m "first revision"
 
-alembic revision --autogenerate -m <message>
+migrate:
+	alembic upgrade head
 
-alembic upgrade head
+reset_database:
+	alembic stamp head
 
-reset_database: alembic stamp head
+run:
+	gunicorn -w 1 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000 src.main:app

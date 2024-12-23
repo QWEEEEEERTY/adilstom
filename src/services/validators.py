@@ -21,3 +21,7 @@ def validate_phone(phone):
 
     phone = f"+{phone[:-10]} ({phone[-10:-7]}) {phone[-7:-4]}-{phone[-4:-2]}-{phone[-2:]}"
     return phone
+
+
+def validate_iin(iin: str):
+    return iin.replace(" ", "")
