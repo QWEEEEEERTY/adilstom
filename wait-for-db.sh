@@ -10,7 +10,7 @@ while ! nc -z psql 5432; do
 done
 
 echo "PostgreSQL started"
-make reset_database
+mkdir -p migrations/versions
 make revision
 make migrate
 exec $cmd
