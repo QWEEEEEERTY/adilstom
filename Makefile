@@ -12,3 +12,6 @@ reset_database:
 
 run:
 	gunicorn -w 1 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000 src.main:app
+
+reset:
+	docker-compose down --rmi all --volumes --remove-orphans

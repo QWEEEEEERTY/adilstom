@@ -30,7 +30,7 @@ class LogAdmin(ModelView, model=Log):
     column_sortable_list = [column.key for column in Log.__table__.columns]
 
     name_plural = "Logs"
-    can_create = True
+    can_create = False
     can_edit = True
     can_delete = True
     can_view_details = True
