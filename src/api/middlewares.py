@@ -18,7 +18,10 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         response_body = b""
         async for chunk in response.body_iterator:
             response_body += chunk
-        response_body_str = response_body.decode('utf-8') if response_body else "No body"
+        try:
+            response_body_str = response_body.decode('utf-8') if response_body else "No body"
+        except UnicodeDecodeError:
+            response_body_str = "Failed to decode response body"
 
         rebuilt_response = Response(
             content=response_body,
